@@ -122,12 +122,20 @@ async function onSubmit(e) {
             // console.log(response.data.newExpense);
             if (EulDiv.classList.contains('hidden')) {
                 noRecordsAvailable();
+                // pagination.classList.remove('hidden');
             }
             // console.log(pageData);
             lastPage = pageData.lastPage;
-            // console.log(lastPage);
+            // console.log(pageData);
+            if(lastPage!=0){
+
+                showOnScreen(response.data.newExpense, 1);
+            }
+            else{
+                showOnScreen(response.data.newExpense, 0);
+            }
+
             showPagination(pageData);
-            showOnScreen(response.data.newExpense, 1);
 
             // showLeaderBoard();
 
@@ -301,10 +309,10 @@ function showPagination(pageData) {
 
     const rowsperpage=localStorage.getItem('rowsPerPage');
     
+    pagination.classList.remove('hidden');
 
     pagination.innerHTML = '';
 
-    pagination.hidden = false;
 
     lastPage=pageData.lastPage;
 
@@ -352,7 +360,7 @@ function showPagination(pageData) {
     }
 
 
-    if (pageData.nextPage != pageData.lastPage && pageData.currentPage != pageData.lastPage) {
+    if (pageData.nextPage != pageData.lastPage && pageData.currentPage != pageData.lastPage && pageData.lastPage !=0) {
         const dotsBtn = document.createElement('p');
         dotsBtn.innerHTML = '...';
         dotsBtn.classList.add('px-3', 'h-8', 'text-sm', 'font-medium', 'text-[#154e49]', 'bg-white');
