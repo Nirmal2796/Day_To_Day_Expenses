@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', DomLoad);
 
 //PAGE
 let lastPage=1;
-let pageData;
+// let pageData;
 
 //token
 const token = localStorage.getItem('token');
@@ -56,7 +56,7 @@ rowsPerPage.onchange=async()=>{
 function noRecordsAvailable() {
     EulDiv.classList.toggle('hidden');
     noExpenseRecords.classList.toggle('hidden');
-    pagination.classList.toggle('hidden');
+    pagination.classList.add('hidden');
     rowsPerPageDiv.classList.toggle('hidden');
 }
 
@@ -117,25 +117,27 @@ async function onSubmit(e) {
                 description: desc.value,
                 category: category.value
             };
+
+            const rowsperpage=localStorage.getItem('rowsPerPage');
+
             // console.log(expense);
-            let response = await axios.post("http://3.88.62.108:3000/add-expense/", expense, { headers: { 'Auth': token } });
+            let response = await axios.post(`http://3.88.62.108:3000/add-expense?page=${lastPage}&limit=${rowsperpage}`, expense, { headers: { 'Auth': token } });
             // console.log(response.data.newExpense);
             if (EulDiv.classList.contains('hidden')) {
                 noRecordsAvailable();
                 // pagination.classList.remove('hidden');
             }
             // console.log(pageData);
-            lastPage = pageData.lastPage;
-            // console.log(pageData);
-            if(lastPage!=0){
+            // console.log(response.data.pageData.lastPage);
+            lastPage = response.data.pageData.lastPage;
 
-                showOnScreen(response.data.newExpense, 1);
-            }
-            else{
-                showOnScreen(response.data.newExpense, 0);
-            }
+            showPagination(response.data.pageData);
 
-            showPagination(pageData);
+           
+
+            showOnScreen(response.data.newExpense, 1);
+           
+
 
             // showLeaderBoard();
 
@@ -163,7 +165,7 @@ async function getExpenses(page, flag,rowsPerPage) {
         const expenses = res.data.expenses;
         // console.log(res.data.expenses);
         lastPage = res.data.pageData.lastPage;
-         pageData=res.data.pageData;
+        pageData=res.data.pageData;
 
         if (expenses.length > 0) {
 
@@ -201,13 +203,15 @@ async function removeExpense(id) {
     try {
 
         // const token=localStorage.getItem('token');
-        const data = await axios.delete(`http://3.88.62.108:3000/delete-expense/${id}`, { headers: { 'Auth': token } });
-        document.getElementById(id).remove();
-        // console.log(data);
         const rowsperpage=localStorage.getItem('rowsPerPage');
+
+        const data = await axios.delete(`http://3.88.62.108:3000/delete-expense/${id}?page=${lastPage}&limit=${rowsperpage}`, { headers: { 'Auth': token } });
+        document.getElementById(id).remove();
+        // console.log(data.data.pageData);
+        
       
         // if()
-        if (Eul.rows.length <= 1 && lastPage==1) {
+        if (Eul.rows.length <=1  && data.data.pageData.previousPage==0) {
             noRecordsAvailable();
         }
         else if(Eul.rows.length <= 1){
@@ -314,7 +318,7 @@ function showPagination(pageData) {
     pagination.innerHTML = '';
 
 
-    lastPage=pageData.lastPage;
+    // lastPage=pageData.lastPage;
 
     // console.log(lastPage);
 
