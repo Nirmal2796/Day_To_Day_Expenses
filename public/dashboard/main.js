@@ -74,6 +74,7 @@ async function DomLoad() {
     try {
 
         const page = 1;
+        localStorage.setItem('rowsPerPage',rowsPerPage.value);
         const rowsperpage=localStorage.getItem('rowsPerPage');
         // console.log(rowsperpage);
         const decodedToken = parseJwt(token);
