@@ -131,9 +131,7 @@ async function onSubmit(e) {
             // console.log(response.data.pageData.lastPage);
             lastPage = response.data.pageData.lastPage;
 
-            showPagination(response.data.pageData);
-
-           
+            showPagination(response.data.pageData); 
 
             showOnScreen(response.data.newExpense, 1);
            
