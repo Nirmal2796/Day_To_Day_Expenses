@@ -68,7 +68,6 @@ ForgotPasswordRequests.belongsTo(User);
 User.hasMany(Downloads);
 Downloads.belongsTo(User);
 
-
 sequelize
 .sync()
 // .sync({force:true})
