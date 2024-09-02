@@ -40,7 +40,6 @@ app.use(cors());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 app.use(bodyParser.json({extended:false}));
 
 app.use(userRouter);
