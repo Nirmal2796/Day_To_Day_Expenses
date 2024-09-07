@@ -47,7 +47,11 @@ exports.addExpense = async (req, res) => {
         const category = req.body.category;
         const description = req.body.description;
 
-        const totalExpenses =  req.user.totalExpenses + Number(amount);
+        const page=Number(req.query.page) || 1;
+        const expenses_per_page=Number(req.query.limit) ;
+
+       
+        const totalExpensesUser =  req.user.totalExpenses + Number(amount);
         
         // console.log(totalExpenses);
 
@@ -58,11 +62,25 @@ exports.addExpense = async (req, res) => {
             date: new Date()
         },{transaction:t});
 
-        await req.user.update({totalExpenses:totalExpenses},{transaction:t});
+       
+
+        await req.user.update({totalExpenses:totalExpensesUser},{transaction:t});
 
         await t.commit();
 
-        res.status(201).json({ newExpense: expense });
+         const totalExpensesPage=await Expense.count({where:{userId:req.user.id}});
+
+        const pageData={
+            currentPage:page,
+            hasNextPage: expenses_per_page* page < totalExpensesPage,
+            nextPage:page+1,
+            hasPreviousPage:page>1,
+            previousPage:page-1,
+            total:totalExpensesPage,
+            lastPage:Math.ceil(totalExpensesPage/expenses_per_page)
+        }
+
+        res.status(201).json({ newExpense: expense , pageData:pageData});
     }
     catch (err) {
         await t.rollback();
@@ -80,6 +98,10 @@ exports.deleteExpense = async (req, res) => {
 
         const id = req.params.id;
 
+        const page=Number(req.query.page) || 1;
+        const expenses_per_page=Number(req.query.limit) ;
+
+
         const expense = await req.user.getExpenses({ where: { id } },{transaction:t})
 
         const totalExpenses =  req.user.totalExpenses - Number(expense[0].amount);
@@ -89,7 +111,21 @@ exports.deleteExpense = async (req, res) => {
 
         await t.commit();
 
-        res.status(200).json(expense);
+        const totalExpensesPage=await Expense.count({where:{userId:req.user.id}});
+
+        const pageData={
+            currentPage:page,
+            hasNextPage: expenses_per_page* page < totalExpensesPage,
+            nextPage:page+1,
+            hasPreviousPage:page>1,
+            previousPage:page-1,
+            total:totalExpensesPage,
+            lastPage:Math.ceil(totalExpensesPage/expenses_per_page)
+        }
+
+        // await t.commit();
+
+        res.status(200).json({expense,pageData});
     }
     catch (err) {
         await t.rollback();
