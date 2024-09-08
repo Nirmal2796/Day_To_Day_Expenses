@@ -74,9 +74,11 @@ exports.addExpense = async (req, res) => {
 
         await t.commit();
 
+
         const totalExpensesPage=await Expense.count({where:{userId:req.user.id}});
 
         const pageData=pageData(page,expenses_per_page,totalExpensesPage);
+
 
         res.status(201).json({ newExpense: expense , pageData:pageData});
     }
@@ -112,6 +114,7 @@ exports.deleteExpense = async (req, res) => {
         const totalExpensesPage=await Expense.count({where:{userId:req.user.id}});
 
         const pageData=pageData(page,expenses_per_page,totalExpensesPage);
+
 
         // await t.commit();
 
