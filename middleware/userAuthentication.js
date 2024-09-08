@@ -7,7 +7,7 @@ exports.authentication = async (req, res,next) => {
 
         const token = req.header('Auth');
         console.log("TOken>>>>>>",token);
-        const decrypted_user = jwt.verify(token, 'sdkjflk');
+        const decrypted_user = jwt.verify(token, process.env.TOKEN_SECRET);
 
         const user = await User.findByPk(decrypted_user.userId);
         // console.log(decrypted_user);

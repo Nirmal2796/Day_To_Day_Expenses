@@ -29,7 +29,7 @@ exports.downloadReport = async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(500).json({ fileURL: '', success: false });
+        res.status(500).json({ fileURL: '', success: false, err:err });
     }
 }
 
