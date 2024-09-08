@@ -4,6 +4,22 @@ const sequelize = require('../util/database');
 
 const UserServices=require('../services/userServices');
 
+
+function pageData(page,expenses_per_page,totalExpenses){
+
+    const pageData={
+        currentPage:page,
+        hasNextPage: expenses_per_page* page < totalExpenses,
+        nextPage:page+1,
+        hasPreviousPage:page>1,
+        previousPage:page-1,
+        total:totalExpenses,
+        lastPage:Math.ceil(totalExpenses/expenses_per_page)
+    }
+
+    return pageData;
+}
+
 exports.getExpenses = async (req, res) => {
     try {
         const page=Number(req.query.page) || 1;
@@ -16,18 +32,8 @@ exports.getExpenses = async (req, res) => {
             limit:expenses_per_page
         });
 
-        
 
-        const pageData={
-            currentPage:page,
-            hasNextPage: expenses_per_page* page < totalExpenses,
-            nextPage:page+1,
-            hasPreviousPage:page>1,
-            previousPage:page-1,
-            total:totalExpenses,
-            lastPage:Math.ceil(totalExpenses/expenses_per_page)
-        }
-
+        const pageData=pageData(page,expenses_per_page,totalExpenses);
 
         res.status(200).json({expenses,pageData});
     }
@@ -68,17 +74,11 @@ exports.addExpense = async (req, res) => {
 
         await t.commit();
 
-         const totalExpensesPage=await Expense.count({where:{userId:req.user.id}});
 
-        const pageData={
-            currentPage:page,
-            hasNextPage: expenses_per_page* page < totalExpensesPage,
-            nextPage:page+1,
-            hasPreviousPage:page>1,
-            previousPage:page-1,
-            total:totalExpensesPage,
-            lastPage:Math.ceil(totalExpensesPage/expenses_per_page)
-        }
+        const totalExpensesPage=await Expense.count({where:{userId:req.user.id}});
+
+        const pageData=pageData(page,expenses_per_page,totalExpensesPage);
+
 
         res.status(201).json({ newExpense: expense , pageData:pageData});
     }
@@ -113,15 +113,8 @@ exports.deleteExpense = async (req, res) => {
 
         const totalExpensesPage=await Expense.count({where:{userId:req.user.id}});
 
-        const pageData={
-            currentPage:page,
-            hasNextPage: expenses_per_page* page < totalExpensesPage,
-            nextPage:page+1,
-            hasPreviousPage:page>1,
-            previousPage:page-1,
-            total:totalExpensesPage,
-            lastPage:Math.ceil(totalExpensesPage/expenses_per_page)
-        }
+        const pageData=pageData(page,expenses_per_page,totalExpensesPage);
+
 
         // await t.commit();
 
