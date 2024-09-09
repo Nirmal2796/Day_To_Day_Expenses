@@ -187,7 +187,7 @@ async function getExpenses(page, flag,rowsPerPage) {
         }
         else{
 
-            if (Eul.rows.length <=1  && data.data.pageData.previousPage==0) {
+            if (Eul.rows.length <=1  && res.data.pageData.previousPage==0) {
                 noRecordsAvailable();
             }
             else{
