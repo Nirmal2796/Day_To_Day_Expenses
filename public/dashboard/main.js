@@ -186,7 +186,6 @@ async function getExpenses(page, flag,rowsPerPage) {
 
         }
         else{
-
             if (Eul.rows.length <=1  && res.data.pageData.previousPage==0) {
                 noRecordsAvailable();
             }
@@ -225,8 +224,10 @@ async function removeExpense(id) {
         if (Eul.rows.length <=1  && data.data.pageData.previousPage==0) {
             noRecordsAvailable();
         }
-        else if(Eul.rows.length <= 1){
-
+        // else if(Eul.rows.length <= 1){
+        //     getExpenses(1,0,rowsperpage);
+        // }
+        else{
             getExpenses(1,0,rowsperpage);
         }
         // showLeaderBoard();
