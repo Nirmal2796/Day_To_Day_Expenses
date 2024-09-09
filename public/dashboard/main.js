@@ -166,6 +166,8 @@ async function getExpenses(page, flag,rowsPerPage) {
         lastPage = res.data.pageData.lastPage;
         pageData=res.data.pageData;
 
+        showPagination(res.data.pageData);
+        
         if (expenses.length > 0) {
 
 
@@ -180,7 +182,7 @@ async function getExpenses(page, flag,rowsPerPage) {
 
             EulDiv.classList.remove('hidden');
 
-            showPagination(res.data.pageData);
+            // showPagination(res.data.pageData);
         }
         else {
             // console.log(res.data.pageData);
@@ -212,10 +214,11 @@ async function removeExpense(id) {
         // if()
         if (Eul.rows.length <=1  && data.data.pageData.previousPage==0) {
             // console.log(Eul.rows.length);
-            showPagination(data.data.pageData);
+            // showPagination(data.data.pageData);
             noRecordsAvailable();
         }
         else if(Eul.rows.length <= 1){
+
             getExpenses(1,0,rowsperpage);
         }
         // showLeaderBoard();
