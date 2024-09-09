@@ -167,7 +167,7 @@ async function getExpenses(page, flag,rowsPerPage) {
         pageData=res.data.pageData;
 
         showPagination(res.data.pageData);
-        
+
         if (expenses.length > 0) {
 
 
@@ -186,6 +186,7 @@ async function getExpenses(page, flag,rowsPerPage) {
         }
         else {
             // console.log(res.data.pageData);
+            pagination.classList.add('hidden');
             EulDiv.classList.toggle('hidden');
             noExpenseRecords.classList.toggle('hidden');
             rowsPerPageDiv.classList.toggle('hidden');
