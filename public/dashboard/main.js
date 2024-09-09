@@ -211,11 +211,12 @@ async function removeExpense(id) {
         
       
         // if()
-        if (Eul.rows.length <=1  && data.data.pageData.lastPage==1) {
+        if (Eul.rows.length == 1  && data.data.pageData.lastPage == 1) {
             noRecordsAvailable();
         }
         else{
-            getExpenses(1,0,rowsperpage);
+            showPagination(data.data.pageData);
+            // getExpenses(1,0,rowsperpage);
         }
         // showLeaderBoard();
 
@@ -315,7 +316,7 @@ function showPagination(pageData) {
     
     pagination.classList.remove('hidden');
 
-    // pagination.innerHTML = '';
+    pagination.innerHTML = '';
 
 
     // lastPage=pageData.lastPage;
