@@ -214,7 +214,7 @@ async function removeExpense(id) {
             // console.log(Eul.rows.length);
             noRecordsAvailable();
         }
-        else if(Eul.rows.length <= 1){
+        else if(Eul.rows.length <= 1 && data.data.pageData.previousPage!=0){
             getExpenses(1,0,rowsperpage);
         }
         // showLeaderBoard();
