@@ -186,18 +186,13 @@ async function getExpenses(page, flag,rowsPerPage) {
 
         }
         else{
-            if (Eul.rows.length <=1  && res.data.pageData.previousPage==0) {
-                noRecordsAvailable();
-            }
-            else{
-                showPagination(res.data.pageData);
-            }
+            
             // console.log(res.data.pageData);
             // pagination.classList.add('hidden');
             // EulDiv.classList.toggle('hidden');
             // noExpenseRecords.classList.toggle('hidden');
             // rowsPerPageDiv.classList.toggle('hidden');
-            // noRecordsAvailable();
+            noRecordsAvailable();
         }
 
     }
@@ -221,7 +216,7 @@ async function removeExpense(id) {
         
       
         // if()
-        if (Eul.rows.length <=1  && data.data.pageData.previousPage==0) {
+        if (Eul.rows.length <=1  && lastPage==1) {
             noRecordsAvailable();
         }
         // else if(Eul.rows.length <= 1){
