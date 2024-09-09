@@ -209,15 +209,15 @@ async function removeExpense(id) {
         document.getElementById(id).remove();
         // console.log(data.data.pageData);
         
+        getExpenses(1,0,rowsperpage);
       
         // if()
-        if (Eul.rows.length == 1  && data.data.pageData.lastPage == 1) {
-            noRecordsAvailable();
-        }
-        else{
-            showPagination(data.data.pageData);
-            // getExpenses(1,0,rowsperpage);
-        }
+        // if (Eul.rows.length == 1  && data.data.pageData.lastPage == 1) {
+        //     noRecordsAvailable();
+        // }
+        // else{
+        //     getExpenses(1,0,rowsperpage);
+        // }
         // showLeaderBoard();
 
     }
