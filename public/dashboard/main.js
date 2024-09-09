@@ -216,7 +216,6 @@ async function removeExpense(id) {
         }
         else{
             getExpenses(1,0,rowsperpage);
-            showPagination(data.data.pageData);
         }
         // showLeaderBoard();
 
@@ -316,7 +315,7 @@ function showPagination(pageData) {
     
     pagination.classList.remove('hidden');
 
-    pagination.innerHTML = '';
+    // pagination.innerHTML = '';
 
 
     // lastPage=pageData.lastPage;
