@@ -167,8 +167,8 @@ async function getExpenses(page, flag,rowsPerPage) {
         // pageData=res.data.pageData;
 
         
-        showPagination(res.data.pageData);
         
+
         if (expenses.length > 0) {
 
                 document.getElementById('expenses-list-body').innerHTML = '';
@@ -182,16 +182,23 @@ async function getExpenses(page, flag,rowsPerPage) {
     
                 EulDiv.classList.remove('hidden');
     
-                // showPagination(res.data.pageData);
+                showPagination(res.data.pageData);
 
         }
         else{
+
+            if (Eul.rows.length <=1  && data.data.pageData.previousPage==0) {
+                noRecordsAvailable();
+            }
+            else{
+                showPagination(res.data.pageData);
+            }
             // console.log(res.data.pageData);
             // pagination.classList.add('hidden');
             // EulDiv.classList.toggle('hidden');
             // noExpenseRecords.classList.toggle('hidden');
             // rowsPerPageDiv.classList.toggle('hidden');
-            noRecordsAvailable();
+            // noRecordsAvailable();
         }
 
     }
