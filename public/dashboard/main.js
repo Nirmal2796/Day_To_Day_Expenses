@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', DomLoad);
 
 //PAGE
 let lastPage=1;
-// let pageData;
+let pageData;
 
 //token
 const token = localStorage.getItem('token');
@@ -56,7 +56,7 @@ rowsPerPage.onchange=async()=>{
 function noRecordsAvailable() {
     EulDiv.classList.toggle('hidden');
     noExpenseRecords.classList.toggle('hidden');
-    pagination.classList.add('hidden');
+    pagination.classList.toggle('hidden');
     rowsPerPageDiv.classList.toggle('hidden');
 }
 
@@ -76,7 +76,7 @@ async function DomLoad() {
         const page = 1;
         localStorage.setItem('rowsPerPage',rowsPerPage.value);
         const rowsperpage=localStorage.getItem('rowsPerPage');
-        // console.log(rowsperpage);
+
         const decodedToken = parseJwt(token);
 
         if (decodedToken.ispremiumuser == true) {
@@ -118,25 +118,17 @@ async function onSubmit(e) {
                 description: desc.value,
                 category: category.value
             };
-
-            const rowsperpage=localStorage.getItem('rowsPerPage');
-
             // console.log(expense);
-            let response = await axios.post(`http://3.88.62.108:3000/add-expense?page=${lastPage}&limit=${rowsperpage}`, expense, { headers: { 'Auth': token } });
+            let response = await axios.post("http://3.88.62.108:3000/add-expense/", expense, { headers: { 'Auth': token } });
             // console.log(response.data.newExpense);
             if (EulDiv.classList.contains('hidden')) {
                 noRecordsAvailable();
-                // pagination.classList.remove('hidden');
             }
             // console.log(pageData);
-            // console.log(response.data.pageData.lastPage);
-            lastPage = response.data.pageData.lastPage;
-
-            showPagination(response.data.pageData); 
-
+            lastPage = pageData.lastPage;
+            // console.log(lastPage);
+            showPagination(pageData);
             showOnScreen(response.data.newExpense, 1);
-           
-
 
             // showLeaderBoard();
 
@@ -164,35 +156,29 @@ async function getExpenses(page, flag,rowsPerPage) {
         const expenses = res.data.expenses;
         // console.log(res.data.expenses);
         lastPage = res.data.pageData.lastPage;
-        // pageData=res.data.pageData;
-
-        
-        
+        pageData=res.data.pageData;
 
         if (expenses.length > 0) {
 
-                document.getElementById('expenses-list-body').innerHTML = '';
-                // noofrows.hidden=false;
-    
-                
-    
-                for (let i in expenses) {
-                    showOnScreen(expenses[i], flag);
-                }
-    
-                EulDiv.classList.remove('hidden');
-    
-                showPagination(res.data.pageData);
 
-        }
-        else{
+            document.getElementById('expenses-list-body').innerHTML = '';
+            // noofrows.hidden=false;
+
             
+
+            for (let i in expenses) {
+                showOnScreen(expenses[i], flag);
+            }
+
+            EulDiv.classList.remove('hidden');
+
+            showPagination(res.data.pageData);
+        }
+        else {
             // console.log(res.data.pageData);
-            // pagination.classList.add('hidden');
-            // EulDiv.classList.toggle('hidden');
-            // noExpenseRecords.classList.toggle('hidden');
-            // rowsPerPageDiv.classList.toggle('hidden');
-            noRecordsAvailable();
+            EulDiv.classList.toggle('hidden');
+            noExpenseRecords.classList.toggle('hidden');
+            rowsPerPageDiv.classList.toggle('hidden');
         }
 
     }
@@ -208,20 +194,15 @@ async function removeExpense(id) {
     try {
 
         // const token=localStorage.getItem('token');
-        const rowsperpage=localStorage.getItem('rowsPerPage');
-
-        const data = await axios.delete(`http://3.88.62.108:3000/delete-expense/${id}?page=${lastPage}&limit=${rowsperpage}`, { headers: { 'Auth': token } });
+        const data = await axios.delete(`http://3.88.62.108:3000/delete-expense/${id}`, { headers: { 'Auth': token } });
         document.getElementById(id).remove();
-        // console.log(data.data.pageData);
-        
+        // console.log(data);
+        const rowsperpage=localStorage.getItem('rowsPerPage');
       
         // if()
-        if (Eul.rows.length <=1  && lastPage==1) {
+        if (Eul.rows.length <= 1 && lastPage==1) {
             noRecordsAvailable();
         }
-        // else if(Eul.rows.length <= 1){
-        //     getExpenses(1,0,rowsperpage);
-        // }
         else{
             getExpenses(1,0,rowsperpage);
         }
@@ -268,17 +249,20 @@ async function buyPremium(e) {
     // const token=localStorage.getItem('token');
     const res = await axios.get('http://3.88.62.108:3000/buypremium', { headers: { 'Auth': token } });
 
-    console.log(res.data.order.id);
     var options = {
         "key": res.data.key_id,
         "order_id": res.data.order.id,
         "handler": async function (res) {
+
+            // console.log(res);
+
             const result = await axios.post('http://3.88.62.108:3000/updateTransactions', {
                 order_id: options.order_id,
                 payment_id: res.razorpay_payment_id,
                 status: 'successful'
             }, { headers: { 'Auth': token } });
 
+            
 
             alert('You are a Premium User Now');
             showPremium();
@@ -306,8 +290,6 @@ async function buyPremium(e) {
     razorpayObject.open();
     e.preventDefault();
 
-
-
 }
 
 
@@ -321,12 +303,12 @@ function showPagination(pageData) {
 
     const rowsperpage=localStorage.getItem('rowsPerPage');
     
-    pagination.classList.remove('hidden');
 
     pagination.innerHTML = '';
 
+    pagination.hidden = false;
 
-    // lastPage=pageData.lastPage;
+    lastPage=pageData.lastPage;
 
     // console.log(lastPage);
 
@@ -372,7 +354,7 @@ function showPagination(pageData) {
     }
 
 
-    if (pageData.nextPage != pageData.lastPage && pageData.currentPage != pageData.lastPage && pageData.lastPage !=0) {
+    if (pageData.nextPage != pageData.lastPage && pageData.currentPage != pageData.lastPage) {
         const dotsBtn = document.createElement('p');
         dotsBtn.innerHTML = '...';
         dotsBtn.classList.add('px-3', 'h-8', 'text-sm', 'font-medium', 'text-[#154e49]', 'bg-white');
