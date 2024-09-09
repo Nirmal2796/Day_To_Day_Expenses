@@ -164,32 +164,34 @@ async function getExpenses(page, flag,rowsPerPage) {
         const expenses = res.data.expenses;
         // console.log(res.data.expenses);
         lastPage = res.data.pageData.lastPage;
-        pageData=res.data.pageData;
+        // pageData=res.data.pageData;
 
+        
         showPagination(res.data.pageData);
-
+        
         if (expenses.length > 0) {
 
+                document.getElementById('expenses-list-body').innerHTML = '';
+                // noofrows.hidden=false;
+    
+                
+    
+                for (let i in expenses) {
+                    showOnScreen(expenses[i], flag);
+                }
+    
+                EulDiv.classList.remove('hidden');
+    
+                // showPagination(res.data.pageData);
 
-            document.getElementById('expenses-list-body').innerHTML = '';
-            // noofrows.hidden=false;
-
-            
-
-            for (let i in expenses) {
-                showOnScreen(expenses[i], flag);
-            }
-
-            EulDiv.classList.remove('hidden');
-
-            // showPagination(res.data.pageData);
         }
-        else {
+        else{
             // console.log(res.data.pageData);
-            pagination.classList.add('hidden');
-            EulDiv.classList.toggle('hidden');
-            noExpenseRecords.classList.toggle('hidden');
-            rowsPerPageDiv.classList.toggle('hidden');
+            // pagination.classList.add('hidden');
+            // EulDiv.classList.toggle('hidden');
+            // noExpenseRecords.classList.toggle('hidden');
+            // rowsPerPageDiv.classList.toggle('hidden');
+            noRecordsAvailable();
         }
 
     }
@@ -214,8 +216,6 @@ async function removeExpense(id) {
       
         // if()
         if (Eul.rows.length <=1  && data.data.pageData.previousPage==0) {
-            // console.log(Eul.rows.length);
-            // showPagination(data.data.pageData);
             noRecordsAvailable();
         }
         else if(Eul.rows.length <= 1){
