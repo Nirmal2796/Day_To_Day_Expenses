@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', DomLoad);
 
 //PAGE
 let lastPage=1;
-
+// let pageData;
 
 //token
 const token = localStorage.getItem('token');
@@ -121,20 +121,24 @@ async function onSubmit(e) {
 
             const rowsperpage=localStorage.getItem('rowsPerPage');
 
-            
+            // console.log(expense);
             let response = await axios.post(`http://3.88.62.108:3000/add-expense?page=${lastPage}&limit=${rowsperpage}`, expense, { headers: { 'Auth': token } });
-          
+            // console.log(response.data.newExpense);
             if (EulDiv.classList.contains('hidden')) {
                 noRecordsAvailable();
-                
+                // pagination.classList.remove('hidden');
             }
-            
+            // console.log(pageData);
+            // console.log(response.data.pageData.lastPage);
             lastPage = response.data.pageData.lastPage;
 
             showPagination(response.data.pageData); 
 
             showOnScreen(response.data.newExpense, 1);
-          
+           
+
+
+            // showLeaderBoard();
 
         }
         catch (err) {
@@ -151,18 +155,25 @@ async function getExpenses(page, flag,rowsPerPage) {
     try {
 
 
-      
+        // console.log(rowsperpage);
+
+
+        // const token=localStorage.getItem('token');
         const res = await axios.get(`http://3.88.62.108:3000/get-expenses?page=${page}&limit=${rowsPerPage}`, { headers: { 'Auth': token } });
 
         const expenses = res.data.expenses;
-       
+        // console.log(res.data.expenses);
         lastPage = res.data.pageData.lastPage;
-      
+        pageData=res.data.pageData;
+
         if (expenses.length > 0) {
 
 
             document.getElementById('expenses-list-body').innerHTML = '';
+            // noofrows.hidden=false;
+
             
+
             for (let i in expenses) {
                 showOnScreen(expenses[i], flag);
             }
@@ -170,11 +181,12 @@ async function getExpenses(page, flag,rowsPerPage) {
             EulDiv.classList.remove('hidden');
 
             showPagination(res.data.pageData);
-            pagination.classList.add('hidden');
         }
         else {
-           
-            noRecordsAvailable();
+            // console.log(res.data.pageData);
+            EulDiv.classList.toggle('hidden');
+            noExpenseRecords.classList.toggle('hidden');
+            rowsPerPageDiv.classList.toggle('hidden');
         }
 
     }
@@ -189,15 +201,23 @@ async function getExpenses(page, flag,rowsPerPage) {
 async function removeExpense(id) {
     try {
 
-      
+        // const token=localStorage.getItem('token');
         const rowsperpage=localStorage.getItem('rowsPerPage');
 
-        const data = await axios.delete(`http://3.88.62.108:3000/delete-expense/${id}?page=${1}&limit=${rowsperpage}`, { headers: { 'Auth': token } });
-        
+        const data = await axios.delete(`http://3.88.62.108:3000/delete-expense/${id}?page=${lastPage}&limit=${rowsperpage}`, { headers: { 'Auth': token } });
         document.getElementById(id).remove();
+        console.log(data.data.pageData);
         
-        getExpenses(1,0,rowsperpage);
-    
+      
+        // if()
+        if (Eul.rows.length <=1  && data.data.pageData.previousPage==0) {
+            console.log(Eul.rows.length);
+            noRecordsAvailable();
+        }
+        else if(Eul.rows.length <= 1){
+            getExpenses(1,0,rowsperpage);
+        }
+        // showLeaderBoard();
 
     }
     catch (err) {
@@ -236,6 +256,8 @@ function showOnScreen(obj, flag) {
 
 async function buyPremium(e) {
 
+
+    // const token=localStorage.getItem('token');
     const res = await axios.get('http://3.88.62.108:3000/buypremium', { headers: { 'Auth': token } });
 
     console.log(res.data.order.id);
@@ -287,13 +309,18 @@ async function buyPremium(e) {
 
 function showPagination(pageData) {
 
-    
+    // console.log("pageData", pageData);
+
     const rowsperpage=localStorage.getItem('rowsPerPage');
     
     pagination.classList.remove('hidden');
 
     pagination.innerHTML = '';
 
+
+    // lastPage=pageData.lastPage;
+
+    // console.log(lastPage);
 
     if (pageData.hasPreviousPage) {
 
@@ -302,9 +329,11 @@ function showPagination(pageData) {
         prevBtn.innerHTML = pageData.previousPage;
         prevBtn.setAttribute('id',pageData.previousPage);
         prevBtn.classList.add('px-3', 'h-8', 'text-sm', 'font-medium', 'text-white', 'bg-[#154e49]', 'hover:text-[#FBB04B]', 'hover:underline', 'hover:scale-125', 'rounded-full');
-        
+        // prevBtn.addEventListener('click',()=>getExpenses(pageData.previouePage,rowsperpage.value)); 
 
         prevBtn.addEventListener('click', () => getExpenses(pageData.previousPage,0,rowsperpage));
+
+        // prevBtn.addEventListener('click',()=>getExpenses(pageData.previouePage,rowsperpage.value)); 
 
         pagination.appendChild(prevBtn);
 
@@ -347,10 +376,12 @@ function showPagination(pageData) {
         lastBtn.setAttribute('id', pageData.lastPage);
 
         lastBtn.classList.add('px-3', 'h-8', 'text-sm', 'font-medium', 'text-white', 'bg-[#154e49]', 'hover:text-[#FBB04B]', 'hover:underline', 'hover:scale-125', 'rounded-full');
-       
+        // prevBtn.addEventListener('click',()=>getExpenses(pageData.previouePage,rowsperpage.value)); 
+
         lastBtn.addEventListener('click', () => getExpenses(pageData.lastPage,0,rowsperpage));
 
-    
+        // prevBtn.addEventListener('click',()=>getExpenses(pageData.previouePage,rowsperpage.value)); 
+
         pagination.appendChild(lastBtn);
     }
 
