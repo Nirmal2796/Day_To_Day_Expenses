@@ -206,11 +206,12 @@ async function removeExpense(id) {
 
         const data = await axios.delete(`http://3.88.62.108:3000/delete-expense/${id}?page=${lastPage}&limit=${rowsperpage}`, { headers: { 'Auth': token } });
         document.getElementById(id).remove();
-        // console.log(data.data.pageData);
+        console.log(data.data.pageData);
         
       
         // if()
         if (Eul.rows.length <=1  && data.data.pageData.previousPage==0) {
+            console.log(Eul.rows.length);
             noRecordsAvailable();
         }
         else if(Eul.rows.length <= 1){
